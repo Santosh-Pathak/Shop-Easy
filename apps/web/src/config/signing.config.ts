@@ -1,0 +1,7 @@
+export const SIGNING_CONFIG = {
+   PROJECT_ID: process.env.NEXT_PUBLIC_E_DOC_SIGN_PROJECT,
+   API_KEY: process.env.NEXT_PUBLIC_E_DOC_SIGN_KEY,
+   API_SECRET: process.env.NEXT_PUBLIC_E_DOC_SIGN_SECRET,
+   JWT_SECRET: process.env.NEXT_PUBLIC_E_DOC_SIGN_JWT_SECRET,
+   BASE_URL: process.env.NEXT_PUBLIC_E_DOC_SIGN_URL,
+} as const
