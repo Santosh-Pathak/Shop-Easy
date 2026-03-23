@@ -1,10 +1,11 @@
 import type { NextConfig } from 'next'
+import path from 'node:path'
 
 const nextConfig: NextConfig = {
    /* config options here */
    turbopack: {
-      // Monorepo root (parent of apps/web) so correct lockfile is used
-      root: '..',
+      // Use absolute monorepo root path for Turbopack in workspaces.
+      root: path.join(__dirname, '..', '..'),
    },
    typescript: {
       // !! WARN !!
