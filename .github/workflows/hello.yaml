@@ -1,0 +1,16 @@
+# name of workflow
+name: hello_world
+
+# event that triggers the workflow
+on:
+  push:
+    branches:
+      - main
+
+# jobs to be run
+jobs:
+  greet:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print Hello World
+        run: echo "Hello World Guys"
