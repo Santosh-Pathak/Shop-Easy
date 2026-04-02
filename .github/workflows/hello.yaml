@@ -1,16 +1,74 @@
-# name of workflow
-name: hello_world
+# # name of workflow
+# name: hello_world
 
-# event that triggers the workflow
+# # event that triggers the workflow
+# on:
+#   push:
+#     branches:
+#       - main
+
+# # jobs to be run
+# jobs:
+#   greet:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Print Hello World
+#         run: echo "Hello World Guys"
+
+name: CI
+
 on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
-# jobs to be run
 jobs:
-  greet:
+  install-and-check:
     runs-on: ubuntu-latest
     steps:
-      - name: Print Hello World
-        run: echo "Hello World Guys"
+      - uses: actions/checkout@v4
+      - name: Use Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+      - name: Install pnpm
+        run: npm i -g pnpm@9
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: lint
+        run: pnpm lint
+      - name: typecheck
+        run: pnpm typecheck
+      - name: run tests
+        run: pnpm test
+      - name: build
+        run: pnpm build
+
+  e2e-api:
+    needs: install-and-check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+      - run: npm i -g pnpm@9
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter api run db:generate
+      - run: pnpm --filter api run db:migrate
+      - run: pnpm --filter api run test:e2e
+
+  docker-build:
+    needs: install-and-check
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Docker Compose
+        run: docker compose -f docker-compose.yml build --parallel
